@@ -47,7 +47,7 @@ for k in sequential_read sequential_write random_read random_read_write random_w
 	set key out
 	set key title "dedup\nchecksum:" 
 	set title "$M\n$O: $D\ndedup ratio: $R"
-	set ylabel "$U"
+	set ylabel "$D, $U"
 	set xlabel "block size, KB"
 	set xrange [0:132]
 	set xtics (4, 8, 16, 32, 64, 128)

@@ -5,6 +5,10 @@ create table dict (
 	term text,
 	dsc text
 );
+create unique index dict_up_n on dict(up,n);
+create index dict_up on dict(up);
+create index dict_n on dict(n);
+create index dict_term on dict(term);
 
 -- 0 dictionary: type of operation
 insert into dict values(0, 0, 'sequential_read', 'sequential read');
@@ -28,16 +32,18 @@ insert into dict values(3, 0, 'operation_type', 'type of operation');
 insert into dict values(3, 1, 'dedup_type', 'type of deduplication');
 insert into dict values(3, 2, 'rate', 'IOPS');
 insert into dict values(3, 3, 'resp', 'duration of the read/write request');
-insert into dict values(3, 4, 'total_mb', 'megabytes of data transferred');
+insert into dict values(3, 4, 'total_mb', 'data transferred');
 insert into dict values(3, 5, 'read_rate', 'read IOPS');
 insert into dict values(3, 6, 'read_resp', 'duration of the read request');
 insert into dict values(3, 7, 'write_rate', 'write IOPS');
 insert into dict values(3, 8, 'write_resp', 'duration of the write request');
-insert into dict values(3, 9, 'cpu_used', 'CPU common utilization');
-insert into dict values(3, 10, 'cpu_user', 'CPU user utilization');
-insert into dict values(3, 11, 'cpu_kernel', 'CPU kernel utilization');
-insert into dict values(3, 12, 'cpu_wait', 'CPU wait');
-insert into dict values(3, 13, 'cpu_idle', 'CPU idle');
+insert into dict values(3, 9, 'read_mb', 'data read');
+insert into dict values(3, 10, 'write_mb', 'data write');
+insert into dict values(3, 11, 'cpu_used', 'CPU common utilization');
+insert into dict values(3, 12, 'cpu_user', 'CPU user utilization');
+insert into dict values(3, 13, 'cpu_kernel', 'CPU kernel utilization');
+insert into dict values(3, 14, 'cpu_wait', 'CPU wait');
+insert into dict values(3, 15, 'cpu_idle', 'CPU idle');
 
 -- 4 dictionary: units for data
 insert into dict values(4, 2, 'rate', 'IOPS');
@@ -75,3 +81,7 @@ create table data (
 	cpu_wait real,
 	cpu_idle real
 );
+create index data_milestone on data(milestone);
+create index data_block_size on data(block_size);
+create index data_operation_type on data(operation_type);
+create index data_dedup_type on data(dedup_type);
