@@ -6,6 +6,7 @@ GNUPLOT=/usr/local/bin/gnuplot
 SQLITE=/usr/local/bin/sqlite3
 # fonts for gnuplot
 export GDFONTPATH=/usr/local/lib/X11/fonts/webfonts
+# zfsxx scrips dir
 SCRIPTS=$(dirname $0)
 
 rm -f zfsxx.db
@@ -20,10 +21,11 @@ for k in sequential_read sequential_write random_read random_read_write random_w
   for i in total_mb rate resp cpu_kernel; do
 	$SQLITE zfsxx.db <<-EOF >report.dat
 	.mode tabs
-	select data.block_size, dedup.term, $i
+	select data.block_size, dedup.dsc, $i
 	from data, dict dedup, dict operation
 	where dedup.up=1 and dedup.n=dedup_type
 	and operation.up=0 and operation.term='$k' and operation.n=data.operation_type
+	and data.milestone=0
 	order by dedup.term, data.block_size;
 	EOF
 
@@ -36,13 +38,15 @@ for k in sequential_read sequential_write random_read random_read_write random_w
 	O=$(echo "select dsc from dict where up=0 and term='$k';" | $SQLITE zfsxx.db)
 	U=$(echo "select dsc from dict where up=4 and term='$i';" | $SQLITE zfsxx.db)
 	D=$(echo "select dsc from dict where up=3 and term='$i';" | $SQLITE zfsxx.db)
+	M=$(echo "select dsc from dict where up=2 and n=0;" | $SQLITE zfsxx.db)
+	R=$(echo "select max(dedup_ratio) from data where milestone=0;" | $SQLITE zfsxx.db)
 
 	$GNUPLOT <<-EOF
-	set terminal jpeg
+	set terminal jpeg size 1024,768
 	set output "${k}_${i}.jpg"
 	set key out
-	set key title "Dedup:" 
-	set title "$O: $D"
+	set key title "dedup\nchecksum:" 
+	set title "$M\n$O: $D\ndedup ratio: $R"
 	set ylabel "$U"
 	set xlabel "block size, KB"
 	set xrange [0:132]
