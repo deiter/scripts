@@ -39,7 +39,7 @@ for ZXX_DEDUP in off on verify sha256 sha256,verify; do
 	rm -f report.csv
 	vdbench parseflat -i output/flatfile.html -o report.csv -c rate resp MB/sec Read_rate Read_resp Write_rate Write_resp MB_read MB_write cpu_used cpu_user cpu_kernel cpu_wait cpu_idle -a 2>/dev/null
 	test -s report.csv || exit 1
-	printf "%d,%d,%d,%d,%d" $MILESTONE, $ZXX_RS $MODE $DEDUP_TYPE $DEDUP_RATIO
+	printf "%d,%d,%d,%d,%d," $MILESTONE, $ZXX_RS $MODE $DEDUP_TYPE $DEDUP_RATIO
 	tail -1 report.csv
 	cd ..
     done
