@@ -1,28 +1,59 @@
-drop table dic_data;
-create table dic_data (
+-- drop table dict;
+create table dict (
 	up integer,
 	n integer,
-	term text
+	term text,
+	dsc text
 );
 
 -- 0 dictionary: type of operation
-insert into dic_data values(0, 0, 'sequential read');
-insert into dic_data values(0, 1, 'sequential write');
-insert into dic_data values(0, 2, 'random read');
-insert into dic_data values(0, 3, 'random 50% read, 50% write');
-insert into dic_data values(0, 4, 'random write');
+insert into dict values(0, 0, 'sequential_read', 'sequential read');
+insert into dict values(0, 1, 'sequential_write', 'sequential write');
+insert into dict values(0, 2, 'random_read', 'random read');
+insert into dict values(0, 3, 'random_read_write', 'random 50% read and 50% write');
+insert into dict values(0, 4, 'random_write', 'random write');
 
 -- 1 dictionary: type of dedup
-insert into dic_data values(1, 0, 'off');
-insert into dic_data values(1, 1, 'on');
-insert into dic_data values(1, 2, 'verify');
-insert into dic_data values(1, 3, 'sha256');
-insert into dic_data values(1, 4, 'sha256,verify');
+insert into dict values(1, 0, 'off', 'off');
+insert into dict values(1, 1, 'on', 'on');
+insert into dict values(1, 2, 'verify', 'verify');
+insert into dict values(1, 3, 'sha256', 'sha256');
+insert into dict values(1, 4, 'sha256_verify', 'sha256,verify');
 
 -- 2 dictionary: milestone
-insert into dic_data values(2, 0, '4.0m23');
+insert into dict values(2, 0, '4.0m23', 'NexentaStor 4.0 Milestone 23');
 
-drop table data;
+-- 3 dictionary: description for data
+insert into dict values(3, 0, 'operation_type', 'type of operation');
+insert into dict values(3, 1, 'dedup_type', 'type of deduplication');
+insert into dict values(3, 2, 'rate', 'IOPS');
+insert into dict values(3, 3, 'resp', 'duration of the read/write request');
+insert into dict values(3, 4, 'total_mb', 'megabytes of data transferred');
+insert into dict values(3, 5, 'read_rate', 'read IOPS');
+insert into dict values(3, 6, 'read_resp', 'duration of the read request');
+insert into dict values(3, 7, 'write_rate', 'write IOPS');
+insert into dict values(3, 8, 'write_resp', 'duration of the write request');
+insert into dict values(3, 9, 'cpu_used', 'CPU common utilization');
+insert into dict values(3, 10, 'cpu_user', 'CPU user utilization');
+insert into dict values(3, 11, 'cpu_kernel', 'CPU kernel utilization');
+insert into dict values(3, 12, 'cpu_wait', 'CPU wait');
+insert into dict values(3, 13, 'cpu_idle', 'CPU idle');
+
+-- 4 dictionary: units for data
+insert into dict values(4, 2, 'rate', 'IOPS');
+insert into dict values(4, 3, 'resp', 'msec');
+insert into dict values(4, 4, 'total_mb', 'MB/sec');
+insert into dict values(4, 5, 'read_rate', 'IOPS');
+insert into dict values(4, 6, 'read_resp', 'msec');
+insert into dict values(4, 7, 'write_rate', 'IOPS');
+insert into dict values(4, 8, 'write_resp', 'msec');
+insert into dict values(4, 9, 'cpu_used', '%');
+insert into dict values(4, 10, 'cpu_user', '%');
+insert into dict values(4, 11, 'cpu_kernel', '%');
+insert into dict values(4, 12, 'cpu_wait', '%');
+insert into dict values(4, 13, 'cpu_idle', '%');
+
+-- drop table data;
 create table data (
 	milestone integer,
 	block_size integer,
