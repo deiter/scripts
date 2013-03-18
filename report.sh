@@ -54,5 +54,7 @@ for k in sequential_read sequential_write random_read random_read_write random_w
 	plot for [i=0:4] 'report.dat' using 1:3 every :::i::i w l title columnhead(2)
 	EOF
 	rm -f report.dat
+	ls "${k}_${i}.jpg"
   done
 done
+rm -f zfsxx.db
