@@ -11,17 +11,6 @@ sqlite3 zfsxx.db <<EOF
 .import report.csv data
 EOF
 
-#sqlite3 zfsxx.db <<EOF >report.dat
-#.mode tabs
-#select block_size, term, total_mb, rate, resp, cpu_kernel from data, dict
-#        where operation_type=0 and up=1 and n=dedup_type;
-#EOF
-
-#sed -i '' 's/^\(128.*\)$/\1\
-#/g' report.dat
-#sed -i '' 's/^\(4.*\)$/\1\
-#\1/g' report.dat
-
 for k in sequential_read sequential_write random_read random_read_write random_write; do
   for i in total_mb rate resp cpu_kernel; do
 	sqlite3 zfsxx.db <<-EOF >report.dat
@@ -55,58 +44,6 @@ for k in sequential_read sequential_write random_read random_read_write random_w
 	set xtics (4, 8, 16, 32, 64, 128)
 	plot for [i=0:4] 'report.dat' using 1:3 every :::i::i w l title columnhead(2)
 	EOF
+	rm -f report.dat
   done
 done
-exit
-
-gnuplot <<EOF
-set terminal jpeg
-set output "mb_sequential_read.jpg"
-set key out
-set key title "Dedup:" 
-set title "sequential read: MBPS"
-set ylabel "MBPS"
-set xlabel "block size, KB"
-set xrange [0:132]
-set xtics (4, 8, 16, 32, 64, 128)
-plot for [i=0:4] 'report.dat' using 1:3 every :::i::i w l title columnhead(2)
-EOF
-
-gnuplot <<'EOF'
-set terminal jpeg
-set output "iops_sequential_read.jpg"
-set key out
-set key title "Dedup:"
-set title "sequential read: IOPS"
-set ylabel "IOPS"
-set xlabel "block size, KB"
-set xrange [0:132]
-set xtics (4, 8, 16, 32, 64, 128)
-plot for [i=0:4] 'report.dat' using 1:4 every :::i::i w l title columnhead(2)
-EOF
-
-gnuplot <<'EOF'
-set terminal jpeg
-set output "response_sequential_read.jpg"
-set key out
-set key title "Dedup:"
-set title "sequential read: response"
-set ylabel "response, ms"
-set xlabel "block size, KB"
-set xrange [0:132]
-set xtics (4, 8, 16, 32, 64, 128)
-plot for [i=0:4] 'report.dat' using 1:5 every :::i::i w l title columnhead(2)
-EOF
-
-gnuplot <<'EOF'
-set terminal jpeg
-set output "cpu_sequential_read.jpg"
-set key out
-set key title "Dedup:"
-set title "sequential read: CPU"
-set ylabel "CPU, %"
-set xlabel "block size, KB"
-set xrange [0:132]
-set xtics (4, 8, 16, 32, 64, 128)
-plot for [i=0:4] 'report.dat' using 1:6 every :::i::i w l title columnhead(2)
-EOF
