@@ -1,19 +1,24 @@
 #!/bin/sh -e
 
-SCRIPTS=$(dirname $0)
+# gnuplot location
+GNUPLOT=/usr/local/bin/gnuplot
+# sqlite location
+SQLITE=/usr/local/bin/sqlite3
+# fonts for gnuplot
 export GDFONTPATH=/usr/local/lib/X11/fonts/webfonts
+SCRIPTS=$(dirname $0)
 
 rm -f zfsxx.db
-sqlite3 zfsxx.db <$SCRIPTS/zfsxx.sql
+$SQLITE zfsxx.db <$SCRIPTS/zfsxx.sql
 
-sqlite3 zfsxx.db <<EOF
+$SQLITE zfsxx.db <<EOF
 .mode csv 
 .import report.csv data
 EOF
 
 for k in sequential_read sequential_write random_read random_read_write random_write; do
   for i in total_mb rate resp cpu_kernel; do
-	sqlite3 zfsxx.db <<-EOF >report.dat
+	$SQLITE zfsxx.db <<-EOF >report.dat
 	.mode tabs
 	select data.block_size, dedup.term, $i
 	from data, dict dedup, dict operation
@@ -28,11 +33,11 @@ for k in sequential_read sequential_write random_read random_read_write random_w
 	sed -i '' 's/^\(4.*\)$/\1\
 \1/g' report.dat
 
-	O=$(echo "select dsc from dict where up=0 and term='$k';" | sqlite3 zfsxx.db)
-	U=$(echo "select dsc from dict where up=4 and term='$i';" | sqlite3 zfsxx.db)
-	D=$(echo "select dsc from dict where up=3 and term='$i';" | sqlite3 zfsxx.db)
+	O=$(echo "select dsc from dict where up=0 and term='$k';" | $SQLITE zfsxx.db)
+	U=$(echo "select dsc from dict where up=4 and term='$i';" | $SQLITE zfsxx.db)
+	D=$(echo "select dsc from dict where up=3 and term='$i';" | $SQLITE zfsxx.db)
 
-	gnuplot <<-EOF
+	$GNUPLOT <<-EOF
 	set terminal jpeg
 	set output "${k}_${i}.jpg"
 	set key out
