@@ -29,9 +29,9 @@ zxx_pool() {
 }
 
 for ZXX_DEDUP in off on verify sha256 sha256,verify; do
-  zxx_pool
-  sudo /sbin/zfs set dedup=$ZXX_DEDUP $ZXX_POOL/$ZXX_FS
   for ZXX_RS in 4k 8k 16k 32k 64k 128k; do
+    zxx_pool
+    sudo /sbin/zfs set dedup=$ZXX_DEDUP $ZXX_POOL/$ZXX_FS
     sudo /sbin/zfs set recordsize=$ZXX_RS $ZXX_POOL/$ZXX_FS
     for ZXX_RW in read write 100 50 0; do
 	sudo /sbin/zpool export $ZXX_POOL
