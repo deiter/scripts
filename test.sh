@@ -6,7 +6,7 @@ ZXX_MNT="/volumes/$ZXX_POOL"
 ZXX_STAMP="`date "+%Y.%m.%d-%H:%M:%S"`"
 ZXX_TESTS="/export/home/qa/tests/$ZXX_STAMP"
 ZXX_ELAPSED="600"
-ZXX_INTERVAL="60"
+ZXX_INTERVAL="10"
 
 mkdir -p "$ZXX_TESTS"
 cd "$ZXX_TESTS"
@@ -29,11 +29,14 @@ zxx_pool() {
 }
 
 for ZXX_DEDUP in off on verify sha256 sha256,verify; do
+  zxx_pool
+  sudo /sbin/zfs set dedup=$ZXX_DEDUP $ZXX_POOL/$ZXX_FS
   for ZXX_RS in 4k 8k 16k 32k 64k 128k; do
+    sudo /sbin/zfs set recordsize=$ZXX_RS $ZXX_POOL/$ZXX_FS
     for ZXX_RW in read write 100 50 0; do
-	zxx_pool
-	sudo /sbin/zfs set dedup=$ZXX_DEDUP $ZXX_POOL/$ZXX_FS
-	sudo /sbin/zfs set recordsize=$ZXX_RS $ZXX_POOL/$ZXX_FS
+	sudo /sbin/zpool export $ZXX_POOL
+	/sbin/zpool status $ZXX_POOL
+	sudo /sbin/zpool import $ZXX_POOL
 	case "$ZXX_RW" in
 	read|write)
 		ZXX_MODE=sequential
@@ -53,7 +56,7 @@ for ZXX_DEDUP in off on verify sha256 sha256,verify; do
 	dedupunit=$ZXX_RS
 	fsd=fsd1,anchor=$ZXX_MNT/$ZXX_FS,depth=2,width=2,files=8,size=4G
 	fwd=fwd1,fsd=fsd1,$ZXX_OP=$ZXX_RW,xfersize=$ZXX_RS,fileio=$ZXX_MODE,fileselect=$ZXX_MODE,threads=8
-	rd=rd1,fwd=fwd1,fwdrate=max,format=yes,elapsed=$ZXX_ELAPSED,interval=$ZXX_INTERVAL
+	rd=rd1,fwd=fwd1,fwdrate=max,format=restart,elapsed=$ZXX_ELAPSED,interval=$ZXX_INTERVAL
 	EOF
 
 	zpool iostat -v $ZXX_POOL $ZXX_INTERVAL >zpool_iostat.txt 2>zpool_iostat.err &
