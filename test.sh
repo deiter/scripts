@@ -56,7 +56,7 @@ for ZXX_DEDUP in off on verify sha256 sha256,verify; do
 	rd=rd1,fwd=fwd1,fwdrate=max,format=yes,elapsed=$ZXX_ELAPSED,interval=$ZXX_INTERVAL
 	EOF
 
-	zpool iostat $ZXX_POOL $ZXX_INTERVAL >zpool_iostat.txt 2>zpool_iostat.err &
+	zpool iostat -v $ZXX_POOL $ZXX_INTERVAL >zpool_iostat.txt 2>zpool_iostat.err &
 	zpool status $ZXX_POOL $ZXX_INTERVAL -D >zpool_status.txt 2>zpool_status.err &
 	iostat -xnz $ZXX_INTERVAL >iostat.txt 2>iostat.err &
 	vdbench -f vdbench.in
