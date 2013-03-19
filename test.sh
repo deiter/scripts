@@ -56,9 +56,13 @@ for ZXX_DEDUP in off on verify sha256 sha256,verify; do
 	rd=rd1,fwd=fwd1,fwdrate=max,format=yes,elapsed=$ZXX_ELAPSED,interval=$ZXX_INTERVAL
 	EOF
 
-	zpool iostat $ZXX_POOL $ZXX_INTERVAL $(( $ZXX_ELAPSED / $ZXX_INTERVAL)) >zpool_iostat.txt 2>zpool_iostat.err &
+	zpool iostat $ZXX_POOL $ZXX_INTERVAL >zpool_iostat.txt 2>zpool_iostat.err &
+	zpool status $ZXX_POOL $ZXX_INTERVAL -D >zpool_status.txt 2>zpool_status.err &
+	iostat -xnz $ZXX_POOL $ZXX_INTERVAL >iostat.txt 2>iostat.err &
 	vdbench -f vdbench.in
 	vdbench parseflat -i output/flatfile.html -o report.csv -c Xfersize rate resp MB/sec Read_rate Read_resp Write_rate Write_resp MB_read MB_write cpu_used cpu_user cpu_kernel cpu_wait cpu_idle -a
+	pkill zpool
+	pkill iostat
 	zpool get all $ZXX_POOL >zpool_get_all.txt 2>zpool_get_all.err
 	cd ..
     done
