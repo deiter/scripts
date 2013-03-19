@@ -33,7 +33,7 @@ for ZXX_DEDUP in off on verify sha256 sha256,verify; do
     zxx_pool
     sudo /sbin/zfs set dedup=$ZXX_DEDUP $ZXX_POOL/$ZXX_FS
     sudo /sbin/zfs set recordsize=$ZXX_RS $ZXX_POOL/$ZXX_FS
-    for ZXX_RW in read write 100 50 0; do
+    for ZXX_RW in write read 100 50 0; do
 	sudo /sbin/zpool export $ZXX_POOL
 	sudo /sbin/zpool import $ZXX_POOL
 	case "$ZXX_RW" in
