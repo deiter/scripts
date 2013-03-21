@@ -28,14 +28,13 @@ zxx_pool() {
 	sudo /usr/bin/chown -R qa $ZXX_MNT
 }
 
-for ZXX_DEDUP in off on verify sha256 sha256,verify; do
+#for ZXX_DEDUP in off on verify sha256 sha256,verify; do
+for ZXX_DEDUP in off sha256; do
   for ZXX_RS in 4k 8k 16k 32k 64k 128k; do
-    zxx_pool
-    sudo /sbin/zfs set dedup=$ZXX_DEDUP $ZXX_POOL/$ZXX_FS
-    sudo /sbin/zfs set recordsize=$ZXX_RS $ZXX_POOL/$ZXX_FS
     for ZXX_RW in write read 100 50 0; do
-	sudo /sbin/zpool export $ZXX_POOL
-	sudo /sbin/zpool import $ZXX_POOL
+	zxx_pool
+	sudo /sbin/zfs set dedup=$ZXX_DEDUP $ZXX_POOL/$ZXX_FS
+	sudo /sbin/zfs set recordsize=$ZXX_RS $ZXX_POOL/$ZXX_FS
 	case "$ZXX_RW" in
 	read|write)
 		ZXX_MODE=sequential
@@ -59,8 +58,8 @@ for ZXX_DEDUP in off on verify sha256 sha256,verify; do
 	EOF
 
 	zpool iostat -v $ZXX_POOL $ZXX_INTERVAL >zpool_iostat.txt 2>zpool_iostat.err &
-	zpool status -D $ZXX_POOL $ZXX_INTERVAL >zpool_status.txt 2>zpool_status.err &
 	iostat -xnz $ZXX_INTERVAL >iostat.txt 2>iostat.err &
+	zpool status -D $ZXX_POOL $ZXX_INTERVAL >zpool_status.txt 2>zpool_status.err &
 	vdbench -f vdbench.in
 	vdbench parseflat -i output/flatfile.html -o report.csv -c Xfersize rate resp MB/sec Read_rate Read_resp Write_rate Write_resp MB_read MB_write cpu_used cpu_user cpu_kernel cpu_wait cpu_idle -a
 	pkill zpool

@@ -25,7 +25,8 @@ insert into dict values(1, 3, 'sha256', 'sha256');
 insert into dict values(1, 4, 'sha256_verify', 'sha256,verify');
 
 -- 2 dictionary: milestone
-insert into dict values(2, 0, '4.0m23', 'NexentaStor 4.0 Milestone 23');
+insert into dict values(2, 0, '4.0m23', 'NexentaStor 4.0 Milestone 22a');
+insert into dict values(2, 1, '4.0m23', 'NexentaStor 4.0 Milestone 22');
 
 -- 3 dictionary: description for data
 insert into dict values(3, 0, 'operation_type', 'type of operation');

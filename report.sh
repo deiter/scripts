@@ -1,5 +1,11 @@
 #!/bin/sh -e
 
+if [ $# -lt 1 ]; then
+	echo "$0 <report1.csv> .. <reportN.csv>"
+	exit 1
+fi
+
+REPORT="$*"
 # gnuplot location
 GNUPLOT=/usr/local/bin/gnuplot
 # sqlite location
@@ -12,10 +18,12 @@ SCRIPTS=$(dirname $0)
 rm -f zfsxx.db
 $SQLITE zfsxx.db <$SCRIPTS/zfsxx.sql
 
-$SQLITE zfsxx.db <<EOF
-.mode csv 
-.import report.csv data
-EOF
+for i in $REPORT; do
+	$SQLITE zfsxx.db <<-EOF
+	.mode csv 
+	.import $i data
+	EOF
+done
 
 for k in sequential_read sequential_write random_read random_read_write random_write; do
   for i in total_mb rate resp cpu_kernel; do
@@ -25,7 +33,7 @@ for k in sequential_read sequential_write random_read random_read_write random_w
 	from data, dict dedup, dict operation
 	where dedup.up=1 and dedup.n=dedup_type
 	and operation.up=0 and operation.term='$k' and operation.n=data.operation_type
-	and data.milestone=0
+	and data.milestone=1
 	order by dedup.term, data.block_size;
 	EOF
 
@@ -38,8 +46,8 @@ for k in sequential_read sequential_write random_read random_read_write random_w
 	O=$(echo "select dsc from dict where up=0 and term='$k';" | $SQLITE zfsxx.db)
 	U=$(echo "select dsc from dict where up=4 and term='$i';" | $SQLITE zfsxx.db)
 	D=$(echo "select dsc from dict where up=3 and term='$i';" | $SQLITE zfsxx.db)
-	M=$(echo "select dsc from dict where up=2 and n=0;" | $SQLITE zfsxx.db)
-	R=$(echo "select max(dedup_ratio) from data where milestone=0;" | $SQLITE zfsxx.db)
+	M=$(echo "select dsc from dict where up=2 and n=1;" | $SQLITE zfsxx.db)
+	R=$(echo "select max(dedup_ratio) from data where milestone=1;" | $SQLITE zfsxx.db)
 
 	$GNUPLOT <<-EOF
 	set terminal jpeg size 1024,768
