@@ -116,7 +116,7 @@ export PARENT_WS=''
 
 # CLONE_WS is the workspace nightly should do a bringover from.
 # NZA:  This will be Nexenta's Illumos child, or a child of that.
-export CLONE_WS=''
+export CLONE_WS="$CODEMGR_WS"
 
 # The bringover, if any, is done as STAFFER.
 # Set STAFFER to your own login as gatekeeper or developer

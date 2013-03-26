@@ -4,7 +4,7 @@ ZXX_POOL="qa"
 ZXX_FS="test"
 ZXX_MNT="/volumes/$ZXX_POOL"
 ZXX_STAMP="`date "+%Y.%m.%d-%H:%M:%S"`"
-ZXX_TESTS="/export/home/qa/tests/$ZXX_STAMP"
+ZXX_TESTS="/export/home/qa/tests/40m22-generic"
 ZXX_ELAPSED="600"
 ZXX_INTERVAL="10"
 
@@ -45,8 +45,16 @@ for ZXX_DEDUP in off sha256; do
 		ZXX_OP=rdpct
 		;;
 	esac
-	mkdir dedup=$ZXX_DEDUP+recordsize=$ZXX_RS+$ZXX_OP=$ZXX_RW+mode=$ZXX_MODE
-	cd dedup=$ZXX_DEDUP+recordsize=$ZXX_RS+$ZXX_OP=$ZXX_RW+mode=$ZXX_MODE
+
+	ZXX_DIR="dedup=$ZXX_DEDUP+recordsize=$ZXX_RS+$ZXX_OP=$ZXX_RW+mode=$ZXX_MODE"
+	if [ -s "$ZXX_DIR/output/flatfile.html" ]; then
+		continue
+	else
+		rm -rf $ZXX_DIR
+	fi
+
+	mkdir $ZXX_DIR
+	cd $ZXX_DIR
 
 	cat >vdbench.in <<-EOF
 	compratio=1

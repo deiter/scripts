@@ -3,9 +3,10 @@
 MILESTONE=0
 DEDUP_RATIO=4
 
-cd $HOME/tests/generic
+cd $HOME/tests/40m22-generic
 
-for ZXX_DEDUP in off on verify sha256 sha256,verify; do
+# for ZXX_DEDUP in off on verify sha256 sha256,verify; do
+for ZXX_DEDUP in off sha256; do
   for ZXX_RS in 4 8 16 32 64 128; do
     for ZXX_RW in read write 100 50 0; do
         case "$ZXX_RW" in
