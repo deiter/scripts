@@ -16,4 +16,6 @@ tar xpf on-closed-bins-nd.i386.tar.bz2
 cp $HOME/scripts/nza.sh .
 ln -s usr/src/tools/scripts/nightly.sh
 
-./nightly.sh ./nza.sh
+read patch me
+
+time ./nightly.sh ./nza.sh

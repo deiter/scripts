@@ -66,7 +66,7 @@ export CODEMGR_WS="$HOME/src/new-nza-ws"
 # export NZA_MAKEDEFS="$CODEMGR_WS/usr/src/Makefile.nza"
 
 # For builds with nza-closed
-export NZA_MAKEDEFS="$CODEMGR_WS/usr/nza-closed/Makefile.nza"
+### export NZA_MAKEDEFS="$CODEMGR_WS/usr/nza-closed/Makefile.nza"
 
 # Maximum number of dmake jobs.  The recommended number is 2 + NCPUS,
 # where NCPUS is the number of logical CPUs on your build system.
@@ -112,7 +112,7 @@ ONBLD_BIN='/opt/onbld/bin'
 # PARENT_WS is used to determine the parent of this workspace. This is
 # for the options that deal with the parent workspace (such as where the
 # proto area will go).
-export PARENT_WS=''
+export PARENT_WS="$CODEMGR_WS"
 
 # CLONE_WS is the workspace nightly should do a bringover from.
 # NZA:  This will be Nexenta's Illumos child, or a child of that.
